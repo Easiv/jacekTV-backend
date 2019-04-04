@@ -19,14 +19,10 @@ db.once('open', function() {
 });
 
 const questionSchema = new mongoose.Schema({
-  name: String,
-  type: String
+  name: String
 })
 
 const Question = mongoose.model('question', questionSchema)
-
-let sampleQuestion = new Question({type: 'question', name: 'co tam iksde'})
-sampleQuestion.save((err) => err ? console.log(err) : console.log('done'))
 
 app.get('/', (req, res) => res.send('root response from backend'))
 
@@ -35,6 +31,12 @@ app.get('/questions', (req, res) => {
     if(err) return console.log(err)
     res.send({question}) //braces for taking model name instead of index
   })
+})
+
+app.post('/questions', (req, res) => {
+  const name = req.body.question.name
+  let newQuestion = new Question({name})
+  newQuestion.save(err => err ? console.log(err) : console.log(`Question ${name} succesfully saved`))
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}.`))
