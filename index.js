@@ -15,13 +15,11 @@ mongoose.connect(uri, {useNewUrlParser: true})
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function() {
-});
+db.once('open', function() {});
 
 const questionSchema = new mongoose.Schema({
   name: String
 })
-
 const Question = mongoose.model('question', questionSchema)
 
 app.get('/', (req, res) => res.send('root response from backend'))
@@ -33,10 +31,19 @@ app.get('/questions', (req, res) => {
   })
 })
 
+app.get('/questions/:id', (req, res) => {
+  Question.find((err, question) => {
+    if(err) console.log(err)
+    res.send({question})
+  })
+})
+
 app.post('/questions', (req, res) => {
   const name = req.body.question.name
   let newQuestion = new Question({name})
   newQuestion.save(err => err ? console.log(err) : console.log(`Question ${name} succesfully saved`))
 })
+
+
 
 app.listen(port, () => console.log(`Listening on port ${port}.`))
