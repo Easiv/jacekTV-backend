@@ -1,16 +1,16 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
-const cors = require('cors')
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-const uri = 'mongodb+srv://easiv:costam12@jacektv-oritw.mongodb.net/jacekTVDB?retryWrites=true'
+const uri = 'mongodb+srv://easiv:costam12@jacektv-oritw.mongodb.net/jacekTVDB?retryWrites=true';
 const port = 3000
 
 const logger = (req, res, next) => {
-  console.log(req.body)
-  console.log(res.body)
+  console.log(req.body);
+  console.log(res.body);
   next()
 }
 
@@ -22,7 +22,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(logger)
 
-mongoose.connect(uri, {useNewUrlParser: true})
+mongoose.connect(uri, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -31,10 +31,18 @@ db.once('open', function() {});
 const questionSchema = new mongoose.Schema({
   name: String
 })
-const Question = mongoose.model('question', questionSchema)
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  isAuthenticated: Boolean,
+  isVip: Boolean
+})
+
+const Question = mongoose.model('question', questionSchema);
+const User = mongoose.model('user', userSchema);
 
 app.get('/', (req, res) => {
-  res.send('root response from backend')
+  res.send('root response from backend');
 })
 
 app.get('/questions', (req, res) => {
@@ -53,15 +61,15 @@ app.get('/questions/:id', (req, res) => {
 
 app.post('/questions', (req, res) => {
   const name = req.body.question.name
-  let newQuestion = new Question({name})
+  let newQuestion = new Question({name});
   newQuestion.save(err => err ? console.log(err) : console.log(`Question ${name} successfully saved`))
 })
 
 app.put('/questions/:id', (req, res) => {
   let _id = req.params.id
-  let name = req.body.question.name
+  let name = req.body.question.name;
 
-  Question.updateOne({_id}, {name}, (err, question) => {
+  Question.updateOne({_id}, {name}, err => {
     err ? console.log(err) : console.log('Question successfully updated')
   })
 })
@@ -71,6 +79,17 @@ app.delete('/questions/:id', (req, res) => {
 
   Question.deleteOne({_id}, (err) => err ? console.log(err) : console.log(`Question successfully deleted`))
   res.json({})
+})
+
+app.post('/users', (req, res) => {
+  const name = req.body.user.name;
+  const isAuthenticated = req.body.user.isAuthenticated;
+  const isVip = req.body.user.isVip;
+
+  let newUser = new User({name, isAuthenticated, isVip})
+  console.log(newUser + 'a')
+  newUser.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
+  res.json(newUser)
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}.`))
