@@ -35,7 +35,8 @@ const questionSchema = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   name: String,
   isAuthenticated: Boolean,
-  isVip: Boolean
+  isVip: Boolean,
+  isAdmin: Boolean
 })
 
 const Question = mongoose.model('question', questionSchema);
@@ -81,12 +82,20 @@ app.delete('/questions/:id', (req, res) => {
   res.json({})
 })
 
+app.get('/users', (req, res) => {
+  User.find((err, user) => {
+    if(err) console.log(err)
+    res.send({user})
+  })
+})
+
 app.post('/users', (req, res) => {
   const name = req.body.user.name;
   const isAuthenticated = req.body.user.isAuthenticated;
   const isVip = req.body.user.isVip;
+  const isAdmin = req.body.user.isAdmin;
 
-  let newUser = new User({name, isAuthenticated, isVip})
+  let newUser = new User({name, isAuthenticated, isVip, isAdmin})
   console.log(newUser + 'a')
   newUser.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
   res.json(newUser)
