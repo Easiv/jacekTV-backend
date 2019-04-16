@@ -95,10 +95,10 @@ app.post('/users', (req, res) => {
   const isVip = req.body.user.isVip;
   const isAdmin = req.body.user.isAdmin;
 
-  let newUser = new User({name, isAuthenticated, isVip, isAdmin})
-  console.log(newUser + 'a')
-  newUser.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
-  res.json(newUser)
+  let user = new User({name, isAuthenticated, isVip, isAdmin})
+  console.log(user + 'a')
+  user.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
+  res.json({user})
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}.`))
