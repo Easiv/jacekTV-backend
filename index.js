@@ -39,8 +39,14 @@ const userSchema = new mongoose.Schema({
   isAdmin: Boolean
 })
 
+const roomSchema = new mongoose.Schema({
+  name: String
+})
+
 const Question = mongoose.model('question', questionSchema);
 const User = mongoose.model('user', userSchema);
+const Room = mongoose.model('room', roomSchema);
+
 
 app.get('/', (req, res) => {
   res.send('root response from backend');
@@ -96,9 +102,23 @@ app.post('/users', (req, res) => {
   const isAdmin = req.body.user.isAdmin;
 
   let user = new User({name, isAuthenticated, isVip, isAdmin})
-  console.log(user + 'a')
   user.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
   res.json({user})
+})
+
+app.post('/rooms', (req, res) => {
+  const name = req.body.room.name;
+
+  let room = new Room({name});
+  room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
+  res.json({room})
+})
+
+app.get('/rooms/:id', (req, res) => {
+  Room.find((err, room) => {
+    if(err) err => console.log(err)
+    res.send({room})
+  })
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}.`))
