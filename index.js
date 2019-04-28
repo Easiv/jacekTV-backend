@@ -34,9 +34,10 @@ const questionSchema = new mongoose.Schema({
 
 const userSchema = new mongoose.Schema({
   name: String,
-  isAuthenticated: Boolean,
-  isVip: Boolean,
-  isAdmin: Boolean
+  isOwner: Boolean,
+  roomId: String,
+  currentAnswer: String,
+  points: Number
 })
 
 const roomSchema = new mongoose.Schema({
@@ -97,11 +98,12 @@ app.get('/users', (req, res) => {
 
 app.post('/users', (req, res) => {
   const name = req.body.user.name;
-  const isAuthenticated = req.body.user.isAuthenticated;
-  const isVip = req.body.user.isVip;
-  const isAdmin = req.body.user.isAdmin;
+  const isOwner = req.body.user.isOwner;
+  const roomId = req.body.user.roomId;
+  const currentAnswer = req.body.user.currentAnswer;
+  const points = req.body.user.points;
 
-  let user = new User({name, isAuthenticated, isVip, isAdmin})
+  let user = new User({name, isOwner, roomId, currentAnswer, points})
   user.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
   res.json({user})
 })
