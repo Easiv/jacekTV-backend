@@ -41,7 +41,8 @@ const userSchema = new mongoose.Schema({
 })
 
 const roomSchema = new mongoose.Schema({
-  name: String
+  name: String,
+  userList: Array
 })
 
 const Question = mongoose.model('question', questionSchema);
@@ -110,8 +111,9 @@ app.post('/users', (req, res) => {
 
 app.post('/rooms', (req, res) => {
   const name = req.body.room.name;
+  const userList = req.body.room.userList;
 
-  let room = new Room({name});
+  let room = new Room({name, userList});
   room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
   res.json({room})
 })
@@ -120,6 +122,16 @@ app.get('/rooms/:id', (req, res) => {
   Room.find((err, room) => {
     if(err) err => console.log(err)
     res.send({room})
+  })
+})
+
+app.put('/rooms/:id', (req, res) => {
+  let _id = req.params.id
+  let name = req.body.room.name;
+  let userList = req.body.room.userList;
+
+  Room.updateOne({_id}, {name, userList}, err => {
+    err ? console.log(err) : console.log('Room successfully updated')
   })
 })
 
