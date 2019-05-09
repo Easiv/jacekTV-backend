@@ -97,6 +97,15 @@ app.get('/users', (req, res) => {
   })
 })
 
+app.get('/users/:id', (req, res) => {
+  let _id = req.params.id
+  
+  User.findOne({ _id }, (err, user) => {
+    if(err) console.log(err)
+    res.send({user})
+  })
+})
+
 app.post('/users', (req, res) => {
   const name = req.body.user.name;
   const isOwner = req.body.user.isOwner;
