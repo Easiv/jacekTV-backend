@@ -62,9 +62,11 @@ app.get('/questions', (req, res) => {
 })
 
 app.get('/questions/:id', (req, res) => {
-  Question.find((err, question) => {
+  let _id = req.params.id;
+
+  Question.findOne({_id}, (err, question) => {
     if(err) console.log(err)
-    res.send({question: question})
+    res.send({question})
   })
 })
 
@@ -87,7 +89,7 @@ app.delete('/questions/:id', (req, res) => {
   let _id = req.params.id
 
   Question.deleteOne({_id}, (err) => err ? console.log(err) : console.log(`Question successfully deleted`))
-  res.json({})
+  res.send({})
 })
 
 app.get('/users', (req, res) => {
@@ -115,7 +117,7 @@ app.post('/users', (req, res) => {
 
   let user = new User({name, isOwner, roomId, currentAnswer, points})
   user.save(err => err ? console.log(err) : console.log(`User ${name} successfully created`))
-  res.json({user})
+  res.send({user})
 })
 
 app.post('/rooms', (req, res) => {
@@ -124,11 +126,13 @@ app.post('/rooms', (req, res) => {
 
   let room = new Room({name, userList});
   room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
-  res.json({room})
+  res.send({room})
 })
 
 app.get('/rooms/:id', (req, res) => {
-  Room.find((err, room) => {
+  let _id = req.params.id;
+
+  Room.findOne({_id}, (err, room) => {
     if(err) err => console.log(err)
     res.send({room})
   })
