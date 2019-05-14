@@ -42,13 +42,31 @@ const userSchema = new mongoose.Schema({
 
 const roomSchema = new mongoose.Schema({
   name: String,
-  userList: Array
+  userList: Array,
+  hasStarted: Boolean,
+  writingPhase: Boolean,
+  comparePhase: Boolean,
+  finalPhase: Boolean
 })
 
 const Question = mongoose.model('question', questionSchema);
 const User = mongoose.model('user', userSchema);
 const Room = mongoose.model('room', roomSchema);
 
+function timer() {
+  let writingTime = true;
+  let counter = 60;
+
+  setInterval(() => {
+    if(counter >= 0) {
+      counter--;
+    } else {
+      writingTime = false;
+      clearInterval();
+      return;
+    }
+  }, 1000);
+}
 
 app.get('/', (req, res) => {
   res.send('root response from backend');
@@ -57,7 +75,7 @@ app.get('/', (req, res) => {
 app.get('/questions', (req, res) => {
   Question.find((err, question) => { //question argument name has to be the same as ember model name
     if(err) return console.log(err)
-    res.send({question: question}) //braces for taking model name instead of index
+    res.send({question}) //braces for taking model name instead of index
   })
 })
 
@@ -102,7 +120,7 @@ app.get('/users', (req, res) => {
 app.get('/users/:id', (req, res) => {
   let _id = req.params.id
   
-  User.findOne({ _id }, (err, user) => {
+  User.findOne({_id }, (err, user) => {
     if(err) console.log(err)
     res.send({user})
   })
@@ -123,8 +141,12 @@ app.post('/users', (req, res) => {
 app.post('/rooms', (req, res) => {
   const name = req.body.room.name;
   const userList = req.body.room.userList;
+  const hasStarted = req.body.room.hasStarted;
+  const writingPhase = req.body.room.writingPhase;
+  const comparePhase = req.body.room.comparePhase;
+  const finalPhase = req.body.room.finalPhase;
 
-  let room = new Room({name, userList});
+  let room = new Room({name, userList, hasStarted, writingPhase, comparePhase, finalPhase});
   room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
   res.send({room})
 })
@@ -142,8 +164,13 @@ app.put('/rooms/:id', (req, res) => {
   let _id = req.params.id
   let name = req.body.room.name;
   let userList = req.body.room.userList;
+  let hasStarted = req.body.room.hasStarted;
+  let writingPhase = req.body.room.writingPhase;
+  let comparePhase = req.body.room.comparePhase;
+  let finalPhase = req.body.room.finalPhase;
 
-  Room.updateOne({_id}, {name, userList}, err => {
+  Room.updateOne({_id}, {name, userList, hasStarted, writingPhase,
+                         comparePhase, finalPhase}, err => {
     err ? console.log(err) : console.log('Room successfully updated')
   })
 })
