@@ -139,6 +139,19 @@ app.post('/users', (req, res) => {
   res.send({user})
 })
 
+app.put('/users/:id', (req, res) => {
+  let _id = req.params.id;
+  let name = req.body.user.name;
+  let isOwner = req.body.user.isOwner;
+  let roomId = req.body.user.roomId;
+  let currentAnswer = req.body.user.currentAnswer;
+  let points = req.body.user.points;
+
+  User.updateOne({_id}, {name, isOwner, roomId, currentAnswer, points}, err => {
+    err ? console.log(err) : console.log(`User ${name} successfully updated`);
+  })
+})
+
 app.post('/rooms', (req, res) => {
   const name = req.body.room.name;
   const userList = req.body.room.userList;
