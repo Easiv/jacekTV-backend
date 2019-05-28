@@ -1,12 +1,25 @@
 const express = require('express');
 const app = express();
+const WebSocket = require('ws');
+
+const wss = new WebSocket.Server({port: 3100});
+  
+wss.on('connection', function connection(ws) {
+  ws.on('message', function incoming(data) {
+
+    wss.clients.forEach(function each(client) {
+      client.send(data);
+      client.send('all systems activated');
+    });
+  });
+});
 
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
 const uri = 'mongodb+srv://easiv:costam12@jacektv-oritw.mongodb.net/jacekTVDB?retryWrites=true';
-const port = 3000
+const port = 3000;
 
 const logger = (req, res, next) => {
   console.log(req.body);
@@ -53,21 +66,6 @@ const roomSchema = new mongoose.Schema({
 const Question = mongoose.model('question', questionSchema);
 const User = mongoose.model('user', userSchema);
 const Room = mongoose.model('room', roomSchema);
-
-function timer() {
-  let writingTime = true;
-  let counter = 60;
-
-  setInterval(() => {
-    if(counter >= 0) {
-      counter--;
-    } else {
-      writingTime = false;
-      clearInterval();
-      return;
-    }
-  }, 1000);
-}
 
 app.get('/', (req, res) => {
   res.send('root response from backend');
