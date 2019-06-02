@@ -9,7 +9,6 @@ wss.on('connection', function connection(ws) {
 
     wss.clients.forEach(function each(client) {
       client.send(data);
-      client.send('all systems activated');
     });
   });
 });
@@ -56,6 +55,7 @@ const userSchema = new mongoose.Schema({
 const roomSchema = new mongoose.Schema({
   name: String,
   userList: Array,
+  presentQuestions: Array,
   usedQuestions: Array,
   hasStarted: Boolean,
   writingPhase: Boolean,
@@ -154,12 +154,13 @@ app.post('/rooms', (req, res) => {
   const name = req.body.room.name;
   const userList = req.body.room.userList;
   const usedQuestions = req.body.room.usedQuestions;
+  const presentQuestions = req.body.room.presentQuestions;
   const hasStarted = req.body.room.hasStarted;
   const writingPhase = req.body.room.writingPhase;
   const comparePhase = req.body.room.comparePhase;
   const finalPhase = req.body.room.finalPhase;
 
-  let room = new Room({name, userList, usedQuestions,
+  let room = new Room({name, userList, presentQuestions, usedQuestions,
                        hasStarted, writingPhase, comparePhase, finalPhase});
   room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
   res.send({room})
@@ -178,13 +179,14 @@ app.put('/rooms/:id', (req, res) => {
   let _id = req.params.id
   let name = req.body.room.name;
   let userList = req.body.room.userList;
+  let presentQuestions = req.body.room.presentQuestions;
   let usedQuestions = req.body.room.usedQuestions;
   let hasStarted = req.body.room.hasStarted;
   let writingPhase = req.body.room.writingPhase;
   let comparePhase = req.body.room.comparePhase;
   let finalPhase = req.body.room.finalPhase;
 
-  Room.updateOne({_id}, {name, userList, hasStarted, writingPhase,
+  Room.updateOne({_id}, {name, userList, hasStarted, writingPhase, presentQuestions,
                          usedQuestions, comparePhase, finalPhase}, err => {
     err ? console.log(err) : console.log('Room successfully updated')
   })
