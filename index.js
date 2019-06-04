@@ -41,6 +41,7 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {});
 
 const questionSchema = new mongoose.Schema({
+  ident: String,
   name: String
 })
 
@@ -89,7 +90,9 @@ app.get('/questions/:id', (req, res) => {
 
 app.post('/questions', (req, res) => {
   const name = req.body.question.name
-  let newQuestion = new Question({name});
+  let newQuestion = new Question({name, ident: null});
+  newQuestion.ident = newQuestion._id;
+
   newQuestion.save(err => err ? console.log(err) : console.log(`Question ${name} successfully saved`))
 })
 
