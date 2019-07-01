@@ -68,6 +68,7 @@ const roomSchema = new mongoose.Schema({
   userList: Array,
   presentQuestions: Array,
   usedQuestions: Array,
+  answeredQuestions: Array,
   hasStarted: Boolean,
   writingPhase: Boolean,
   comparePhase: Boolean,
@@ -168,12 +169,13 @@ app.post('/rooms', (req, res) => {
   const userList = req.body.room.userList;
   const usedQuestions = req.body.room.usedQuestions;
   const presentQuestions = req.body.room.presentQuestions;
+  const answeredQuestions = req.body.room.answeredQuestions;
   const hasStarted = req.body.room.hasStarted;
   const writingPhase = req.body.room.writingPhase;
   const comparePhase = req.body.room.comparePhase;
   const finalPhase = req.body.room.finalPhase;
 
-  let room = new Room({name, userList, presentQuestions, usedQuestions,
+  let room = new Room({name, userList, presentQuestions, usedQuestions, answeredQuestions,
                        hasStarted, writingPhase, comparePhase, finalPhase});
   room.save(err => err ? console.log(err) : console.log(`Room ${name} successfully created`));
   res.send({room})
@@ -194,13 +196,14 @@ app.put('/rooms/:id', (req, res) => {
   let userList = req.body.room.userList;
   let presentQuestions = req.body.room.presentQuestions;
   let usedQuestions = req.body.room.usedQuestions;
+  let answeredQuestions = req.body.room.answeredQuestions;
   let hasStarted = req.body.room.hasStarted;
   let writingPhase = req.body.room.writingPhase;
   let comparePhase = req.body.room.comparePhase;
   let finalPhase = req.body.room.finalPhase;
 
   Room.updateOne({_id}, {name, userList, hasStarted, writingPhase, presentQuestions,
-                         usedQuestions, comparePhase, finalPhase}, err => {
+                         answeredQuestions, usedQuestions, comparePhase, finalPhase}, err => {
     err ? console.log(err) : console.log('Room successfully updated')
   })
 })
