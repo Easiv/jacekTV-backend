@@ -3,11 +3,21 @@ const app = express();
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({port: 3100});
+
+wss.getUniqueID = function () {
+  function s4() {
+    return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  }
+  return s4() + s4() + '-' + s4();
+};
   
 wss.on('connection', function connection(ws) {
+  ws.id = wss.getUniqueID();
+
   ws.on('message', function incoming(data) {
 
     wss.clients.forEach(function each(client) {
+      client.send(JSON.stringify(client.id))
       client.send(data);
     });
   });
